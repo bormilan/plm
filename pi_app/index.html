@@ -1,0 +1,105 @@
+<style>	
+	table{
+		margin: 10px;
+	}
+
+	.border {
+		border: 2px solid black;
+	}
+
+	.button {
+		width: 130px;
+		height: 20px;
+		background-color: lightgray;
+		border: 2px solid black;
+		margin: 10px;
+	}
+	
+	#log{
+		color: red;
+		position: absolute;
+		top: 10px;
+		left: 10px;
+	}
+	
+	p{
+		margin: 0px;
+	}	
+</style>
+
+<center>
+	<div class="button" id="knn">KNN</div>
+	<div class="button" id="svc">SVC</div>
+	<div class="button" id="cnn">CNN</div>
+	<div class="button" id="predict">Predict (p)</div>
+	<div class="button" id="save">Screenshot (q)</div>	
+	<img id="videoFeed" class="" src=''/>	
+</center>
+<div id="log"></div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+	$( document ).ready(function() {			
+		var autoRunning = false;
+		var angle = 180;
+
+        document.addEventListener('keydown', (event) => {			
+			if(!event.repeat){					
+				//console.log(`key=${event.key},code=${event.code}`);
+				key = event.key
+				if(key == "q" || key == 'p')
+					post(key);				
+			}
+
+        });	
+		
+		$( "#save" ).click(function() {
+			post('q');
+		});
+		
+		$( "#predict" ).click(function() {
+			post('p');
+		});	
+		
+		$( "#knn" ).click(function() {
+			post('knn');
+		});	
+
+		$( "#svc" ).click(function() {
+			post('svc');
+		});	
+
+		$( "#cnn" ).click(function() {
+			post('cnn');
+		});	
+		
+		function post(msg){
+			$.ajax({
+				url: '/controll',
+				dataType: 'text',
+				type: 'POST',
+				contentType: 'application/x-www-form-urlencoded',
+				data: { value: msg} ,
+				success: function (data, textStatus, jQxhr) {
+					console.log("Sikeres post");
+					log(data);
+				},
+				error: function (jqXhr, textStatus, errorThrown) {				
+					console.log("Baj\n"+errorThrown);
+				}
+			});
+		}			
+		
+		function log(msg){
+			var id = Date.now();
+			$("#log").append("<p id='"+id+"'>"+msg+"</p>");
+			$("#"+id).delay(3000).fadeOut('slow');
+		}
+		
+		// Set video link
+		var origin   = window.location.origin;		
+		$("#videoFeed").attr("src", origin+"/video_feed");
+		
+		console.log( "ready!" );
+	});			
+</script>
