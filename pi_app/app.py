@@ -13,6 +13,10 @@ import socket
 def index():
     return open("index.html", "r").read()
 
+@app.route('/test')
+def test():
+    return open("index.html", "r").read()
+
 @app.route('/video_feed')
 def video_feed():
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
