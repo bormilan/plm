@@ -30,11 +30,11 @@ def controll():
     elif request.method == 'GET':        
         return "Ez nem erre valo", 200
 
-if __name__ == '__main__':
-    # Find local ip
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    ip = s.getsockname()[0]
-    s.close()
-    # use ip variable when connected to lan
-    app.run(host=ip, port=80, threaded=True)
+# if __name__ == '__main__':
+#     # Find local ip
+#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     s.connect(("8.8.8.8", 80))
+#     ip = s.getsockname()[0]
+#     s.close()
+#     # use ip variable when connected to lan
+#     app.run(host=ip, port=80, threaded=True)
