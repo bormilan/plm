@@ -65,6 +65,9 @@ def augment_images(images, path_out):
   for img in images:
     # Initialising the ImageDataGenerator class.
     # We will pass in the augmentation parameters in the constructor.
+    '''
+      Itt lehet beállítani az augmentálás paramétereit
+    '''
     datagen = ImageDataGenerator(
             # rotation_range = 15,
             # shear_rankge = 0.2,
@@ -84,6 +87,9 @@ def augment_images(images, path_out):
     for batch in datagen.flow(x, batch_size = 1,
                               save_to_dir = path_out, 
                               save_prefix ='image', save_format ='jpeg'):
+        '''
+          Itt lehet beállítani hogy hányszor fusson képenként
+        '''          
         # i += 1
         # if i > 5:
         #     break
