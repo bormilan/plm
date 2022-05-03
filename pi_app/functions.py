@@ -20,7 +20,6 @@ def get_one_frame():
         return image
 
 def prediction():
-    print("ide is")
     return model.predict(get_one_frame())
 
 def set_mode(cmd):
