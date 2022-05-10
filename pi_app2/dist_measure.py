@@ -4,6 +4,8 @@ from skimage import color, feature
 import matplotlib.pyplot as plt
 from skimage import transform
 import joblib
+import datetime
+from scipy.spatial.distance import cityblock
 
 import functions as f
 
@@ -29,7 +31,10 @@ class Distance_measure:
 
         #   image_path = path_image
         #   image = cv2.imread(image_path)
-        img = color.rgb2gray(image)
+        img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        img = img[220:460, 300:700]
+
+        # cv2.imwrite("photos/"+str(datetime.datetime.now()).replace(".","-")+'.jpg', img)
 
         #predict with sliding window
         indices, patches, koords = zip(*sliding_window(self.model, img))
@@ -69,12 +74,12 @@ class Distance_measure:
         distances = calc_distances(a_koords, b_koords)
 
         #if its under the treshold, its good
-        result = False
+        result = "Hibás felhelyezés"
         if np.mean(distances) < self.treshold:
-            result = True
+            result = "Helyes felhelyezés"
 
-        return np.mean(distances)
-    #   return result
+        # return np.mean(distances)
+        return result
 
 
 '''
@@ -90,7 +95,7 @@ def calc_distances(a_koords, b_koords):
     o1 = int((a[0][0] + a[1][0]) / 2), int((a[0][1] + a[1][1]) / 2)
     o2 = int((b[0][0] + b[1][0]) / 2), int((b[0][1] + b[1][1]) / 2)
 
-    distances.append(np.linalg.norm(np.array(o2) - np.array(o1)))
+    distances.append(cityblock(o1, o2))
 
   return distances
 
@@ -103,11 +108,11 @@ def calc_distances(a_koords, b_koords):
     OUTPUT: COORDINATES
 
 '''
-def sliding_window(model, img, istep=10, jstep=10, scale=1.0):
+def sliding_window(model, img, istep=5, jstep=10, scale=1.0):
     
     patch_size = (100, 100)
-    fig, ax = plt.subplots()
-    ax.imshow(img, cmap='gray')
+    # fig, ax = plt.subplots()
+    # ax.imshow(img, cmap='gray')
 
     Ni, Nj = (int(scale * s) for s in patch_size)
     for i in range(0, img.shape[0] - Ni, istep):
@@ -127,8 +132,8 @@ def sliding_window(model, img, istep=10, jstep=10, scale=1.0):
             #ha az akkor rajzoljunk négyzetet köré és adjuk vissza az értékeket
             if label == 1:
               koords = ((j, i), (j + Nj, i + Ni))
-              ax.add_patch(plt.Rectangle((j, i), Nj, Ni, edgecolor='red',
-                                alpha=0.2, lw=2, facecolor='none'))
+            #   ax.add_patch(plt.Rectangle((j, i), Nj, Ni, edgecolor='red',
+            #                     alpha=0.2, lw=2, facecolor='none'))
             yield (i, j, koords)
 
 def main():

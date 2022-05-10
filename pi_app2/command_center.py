@@ -18,8 +18,8 @@ class Command_center:
         GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
         GPIO.setup(12, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
 
-        GPIO.add_event_detect(10,GPIO.RISING,callback=self.prediction_callback) # Setup event on pin 10 rising edge
-        GPIO.add_event_detect(12,GPIO.RISING,callback=self.save_callback)
+        GPIO.add_event_detect(10,GPIO.RISING,callback=self.prediction_callback, bouncetime = 250) # Setup event on pin 10 rising edge
+        GPIO.add_event_detect(12,GPIO.RISING,callback=self.save_callback, bouncetime = 250)
 
     def set_img(self, img):
         self.img = img
@@ -33,4 +33,4 @@ class Command_center:
         
     def save_callback(self, channel):
         cv2.imwrite("photos/"+str(datetime.datetime.now()).replace(".","-")+'.jpg', self.img)
-        print("ye")
+        print("sikeres mentés")
