@@ -2,8 +2,10 @@ import cv2
 import command_center as cc
 import dist_measure as dm
 from led import LED
+import time
 
 def main():
+	
 	video = cv2.VideoCapture(0)
 	width = 1080
 	height = 720
@@ -26,23 +28,34 @@ def main():
 	led.switch(True)
 
 	print("setup done")
+	font = cv2.FONT_HERSHEY_PLAIN  
 
-	try:
-		while True:
-			success, frame = video.read()
+	while True:
+		success, frame = video.read()
+		
+		# if success:
+		command_center.set_img(frame)
 
-			if success:
-				command_center.set_img(frame)
+		#pred text
+		if command_center.last_pred != None and (time.time() - command_center.last_pred) > 5:
+			command_center.text_pred = None
+			#if correct, the color is green, if incorrect, its red
+		color = (0, 0, 255)
+		if command_center.text_pred == "Helyes felhelyezes":
+			color = (0, 255, 0)
+		cv2.putText(frame, command_center.text_pred, (100, 100), font, 2, color, 3, cv2.LINE_AA)				
 
-			# cv2.imshow('test', frame)
+		#photo text
+		if command_center.last_photo != None and (time.time() - command_center.last_photo) > 1:
+			command_center.text_photo = None
+	 
+		cv2.putText(frame, command_center.text_photo, (100, 300), font, 2, (0, 0, 255), 3, cv2.LINE_AA)
 
-			# if i % 2 == 0:
-			# 	command_center.set_img(img1)
-			# else:
-			# 	command_center.set_img(img2)
-	except KeyboardInterrupt:
-		command_center.cleanup()
-		video.release()
+		cv2.imshow('test', frame)
+
+		if cv2.waitKey(1) == ord('q'):
+			command_center.cleanup()
+			video.release()
 	# cv2.destroyAllWindows()
-
+	
 main()

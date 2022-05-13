@@ -1,13 +1,10 @@
 import cv2
 import numpy as np
-from skimage import color, feature
-import matplotlib.pyplot as plt
+from skimage import feature
 from skimage import transform
 import joblib
-import datetime
 from scipy.spatial.distance import cityblock
-
-import functions as f
+import time
 
 class Distance_measure:
 
@@ -32,15 +29,16 @@ class Distance_measure:
         #   image_path = path_image
         #   image = cv2.imread(image_path)
         img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        img = img[220:460, 300:700]
+        img = img[200:440, 300:700]
 
         # cv2.imwrite("photos/"+str(datetime.datetime.now()).replace(".","-")+'.jpg', img)
 
         #predict with sliding window
+        start_time = time.time()
         indices, patches, koords = zip(*sliding_window(self.model, img))
         #plot result
         # vis_points(img, koords)
-
+        print("--- %s seconds ---" % (time.time() - start_time))
         #tuples into list
         koords = list(koords)
 
@@ -74,9 +72,9 @@ class Distance_measure:
         distances = calc_distances(a_koords, b_koords)
 
         #if its under the treshold, its good
-        result = "Hibás felhelyezés"
+        result = "Hibas felhelyezes"
         if np.mean(distances) < self.treshold:
-            result = "Helyes felhelyezés"
+            result = "Helyes felhelyezes"
 
         # return np.mean(distances)
         return result
@@ -108,7 +106,7 @@ def calc_distances(a_koords, b_koords):
     OUTPUT: COORDINATES
 
 '''
-def sliding_window(model, img, istep=5, jstep=10, scale=1.0):
+def sliding_window(model, img, istep=8, jstep=10, scale=1.0):
     
     patch_size = (100, 100)
     # fig, ax = plt.subplots()
@@ -135,28 +133,3 @@ def sliding_window(model, img, istep=5, jstep=10, scale=1.0):
             #   ax.add_patch(plt.Rectangle((j, i), Nj, Ni, edgecolor='red',
             #                     alpha=0.2, lw=2, facecolor='none'))
             yield (i, j, koords)
-
-def main():
-
-    path_model = "/Users/bormilan/Documents/kód/plm/model_knn.sav"
-    path_image = "/Users/bormilan/Documents/plm_kepek_detect/test_crop/2022-04-29 11_24_34-632004.jpg"
-    
-    dm = Distance_measure(path_model)
-
-    path_images = '/Users/bormilan/Documents/plm_kepek_detect/test4'
-    test_images = f.make_data_from_folder(path_images)
-    distances = []
-    for img in test_images:
-        distances.append(dm.distance_measurement(img))
-
-    # print(distances)
-    print(len(distances))
-    num = 0
-    for dist in distances:
-        if dist > 200:
-            num += 1
-
-    print(num)
-    # measure the distance
-    # distance = distance_measurement(path_model, path_image)
-    # print(distance)
