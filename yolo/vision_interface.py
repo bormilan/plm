@@ -126,28 +126,3 @@ class Seeger_DM_Yolo(TF_classifier):
         xyxy = [x - w / 2, y - h / 2, x + w / 2, y + h / 2]  # xywh to xyxy   [4, 25200]
 
         return xyxy, classes, scores
-
-def main():
-    model = Seeger_DM_Yolo("seeger_yolo/seeger_yolov2.tflite")
-    img = cv2.imread("seeger_yolo/test.jpg")
-    img2 = cv2.imread("/Users/bormilan/Documents/plm_kepek_detect/test_raw/test3.jpg")
-    test_images = make_data_from_folder('/Users/bormilan/Documents/plm_kepek_detect/test_raw')
-
-    print(f"{model.run(img2)}")
-    # names = os.listdir('/Users/bormilan/Documents/plm_kepek_detect/test_raw')
-    # for img, name in zip(test_images, names):
-    #     if name != ".DS_Store":
-    #         print(f"{model.run(img)} - {name}")
-
-import os
-def make_data_from_folder(path):
-  data = []
-  for img in os.listdir(path):
-    if img != ".DS_Store":
-      pic = cv2.imread(os.path.join(path,img))
-      pic = cv2.cvtColor(pic,cv2.COLOR_BGR2RGB)
-      # pic = cv2.resize(pic,(80,80))
-      data.append(pic)
-  return data
-
-main()
